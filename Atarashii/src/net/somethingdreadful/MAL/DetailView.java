@@ -1,8 +1,12 @@
 package net.somethingdreadful.MAL;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import net.somethingdreadful.MAL.record.AnimeRecord;
 import net.somethingdreadful.MAL.record.GenericMALRecord;
 import net.somethingdreadful.MAL.record.MangaRecord;
+import net.somethingdreadful.MAL.widget.DefaultImageView;
 
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -70,7 +74,7 @@ RemoveConfirmationDialogFragment.RemoveConfirmationDialogListener {
     TextView ProgressTotalVolumeView;
     TextView ProgressCurrentView;
     TextView ProgressTotalView;
-    ImageView CoverImageView;
+    DefaultImageView CoverImageView;
     RatingBar MALScoreBar;
     RatingBar MyScoreBar;
 
@@ -263,7 +267,7 @@ RemoveConfirmationDialogFragment.RemoveConfirmationDialogListener {
     @Override
     public void basicFragmentReady() {
 
-        CoverImageView = (ImageView) bfrag.getView().findViewById(R.id.detailCoverImage);
+        CoverImageView = (DefaultImageView) bfrag.getView().findViewById(R.id.detailCoverImage);
 
         getDetails();
     }
@@ -331,7 +335,7 @@ RemoveConfirmationDialogFragment.RemoveConfirmationDialogListener {
     public class getDetailsTask extends AsyncTask<Void, Boolean, GenericMALRecord> {
         int mRecordID;
         MALManager mMalManager;
-        ImageDownloader imageDownloader = new ImageDownloader(context);
+        ImageCache_OLD imageDownloader = new ImageCache_OLD(context);
         String internalType;
 
         @Override
@@ -370,6 +374,8 @@ RemoveConfirmationDialogFragment.RemoveConfirmationDialogListener {
                 //Basically I just use publishProgress as an easy way to display info we already have loaded sooner
                 //This way, I can let the database work happen on the background thread and then immediately display it while
                 //the synopsis loads if it hasn't previously been downloaded.
+                // David Stocking 08/10/13 Why does this happen inside of the task? and is inside of onProgressUpdate of all places.
+                // we can make a new function at the very least called like "displayAlreadyAquiredInfo" or something
                 publishProgress(true);
 
                 if(networkAvailable) {
@@ -387,7 +393,13 @@ RemoveConfirmationDialogFragment.RemoveConfirmationDialogListener {
         protected void onProgressUpdate(Boolean... progress) {
             if ("anime".equals(internalType)) {
                 actionBar.setTitle(animeRecord.getName());
-                CoverImageView.setImageDrawable(new BitmapDrawable(imageDownloader.returnDrawable(context, animeRecord.getImageUrl())));
+                try  {
+                	URI url = new URI(animeRecord.getImageUrl());
+                	CoverImageView.setImage(url);
+                } catch (URISyntaxException e) {
+                	// log
+                }
+                //CoverImageView.setImage(new BitmapDrawable(imageDownloader.returnDrawable(context, animeRecord.getImageUrl())));
 
                 ProgressText = Integer.toString(animeRecord.getPersonalProgress(false));
                 TotalProgressText = animeRecord.getTotal(false);
@@ -423,7 +435,13 @@ RemoveConfirmationDialogFragment.RemoveConfirmationDialogListener {
             else {
                 actionBar.setTitle(mangaRecord.getName());
 
-                CoverImageView.setImageDrawable(new BitmapDrawable(imageDownloader.returnDrawable(context, mangaRecord.getImageUrl())));
+                try  {
+                	URI url = new URI(mangaRecord.getImageUrl());
+                	CoverImageView.setImage(url);
+                } catch (URISyntaxException e) {
+                	// log
+                }
+                //CoverImageView.setImageDrawable(new BitmapDrawable(imageDownloader.returnDrawable(context, mangaRecord.getImageUrl())));
 
                 VolumeProgressText = Integer.toString(mangaRecord.getVolumeProgress());
                 VolumeTotalText = Integer.toString(mangaRecord.getVolumesTotal());

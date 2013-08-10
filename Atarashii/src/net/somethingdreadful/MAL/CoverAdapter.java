@@ -1,11 +1,13 @@
 package net.somethingdreadful.MAL;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import net.somethingdreadful.MAL.record.AnimeRecord;
 import net.somethingdreadful.MAL.record.GenericMALRecord;
 import net.somethingdreadful.MAL.record.MangaRecord;
+import net.somethingdreadful.MAL.widget.DefaultImageView;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
@@ -28,7 +30,7 @@ import android.widget.TextView;
 public class CoverAdapter<T> extends ArrayAdapter<T> {
 
     private ArrayList<T> objects;
-    private ImageDownloader imageManager;
+    private ImageCache_OLD imageManager;
     private Context c;
     private MALManager mManager;
     private String type;
@@ -41,7 +43,7 @@ public class CoverAdapter<T> extends ArrayAdapter<T> {
         super(context, resource, objects);
         this.objects = objects;
         this.c = context;
-        imageManager = new ImageDownloader(c);
+        imageManager = new ImageCache_OLD(c);
         mManager = m;
         this.type = type;
         this.resource = resource;
@@ -67,7 +69,7 @@ public class CoverAdapter<T> extends ArrayAdapter<T> {
             viewHolder = new ViewHolder();
             viewHolder.label = (TextView) v.findViewById(R.id.animeName);
             viewHolder.progressCount = (TextView) v.findViewById(R.id.watchedCount);
-            viewHolder.cover = (ImageView) v.findViewById(R.id.coverImage);
+            viewHolder.cover = (DefaultImageView) v.findViewById(R.id.coverImage);
             viewHolder.actionButton = (ImageView) v.findViewById(R.id.popUpButton);
             viewHolder.flavourText = (TextView) v.findViewById(R.id.stringWatched);
 
@@ -84,8 +86,16 @@ public class CoverAdapter<T> extends ArrayAdapter<T> {
         viewHolder.label.setText(a.getName());
 
         viewHolder.progressCount.setText(Integer.toString(a.getPersonalProgress(useSecondaryAmounts)));
+        
+        try {
+        	URI url = new URI(a.getImageUrl());
+            viewHolder.cover.setImage(url);
+        } catch (Exception e) {
+        	// log
+        }
+        
 
-        imageManager.download(a.getImageUrl(), viewHolder.cover);
+        //imageManager.download(a.getImageUrl(), viewHolder.cover);
 
         if (Build.VERSION.SDK_INT >= 11) {
             if ((a.getMyStatus().equals(AnimeRecord.STATUS_WATCHING)) || (a.getMyStatus().equals(MangaRecord.STATUS_WATCHING))) {
@@ -285,7 +295,7 @@ public class CoverAdapter<T> extends ArrayAdapter<T> {
         TextView label;
         TextView progressCount;
         TextView flavourText;
-        ImageView cover;
+        DefaultImageView cover;
         ImageView actionButton;
     }
 

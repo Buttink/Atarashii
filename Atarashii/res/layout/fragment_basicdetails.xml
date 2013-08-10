@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:padding="8dp" >
 
-            <ImageView
+            <net.somethingdreadful.MAL.widget.DefaultImageView
                 android:id="@+id/detailCoverImage"
                 android:layout_width="225dp"
                 android:layout_height="320dp"
