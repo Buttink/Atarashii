@@ -1,6 +1,7 @@
 package net.somethingdreadful.MAL;
 
 import net.somethingdreadful.MAL.api.BaseMALApi;
+import net.somethingdreadful.MAL.helper.ImageCache;
 import net.somethingdreadful.MAL.sql.MALSqlHelper;
 import android.annotation.SuppressLint;
 import android.app.Notification;
@@ -331,7 +332,7 @@ LogoutConfirmationDialogFragment.LogoutConfirmationDialogListener {
         mPrefManager.setPass("");
         mPrefManager.commitChanges();
         context.deleteDatabase(MALSqlHelper.getHelper(context).getDatabaseName());
-        new ImageCache_OLD(context).wipeCache();
+        ImageCache.getSingleton(context).clearDisk();
         startActivity(new Intent(this, Home.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         finish();
     }

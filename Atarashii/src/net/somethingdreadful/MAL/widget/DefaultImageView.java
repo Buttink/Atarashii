@@ -24,10 +24,13 @@ import java.net.URI;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import net.somethingdreadful.MAL.R;
 import net.somethingdreadful.MAL.helper.ImageCache;
 import net.somethingdreadful.MAL.task.FetchImageTask;
 
@@ -89,8 +92,13 @@ public class DefaultImageView extends ImageView {
 				@Override
 				protected void onPostExecute(Bitmap result) {
 					super.onPostExecute(result);
-					if ( result != null )
+					if ( result != null ) {
+						Drawable last = DefaultImageView.this.getDrawable();
 						DefaultImageView.this.setImageBitmap(result);
+						if ( !(last instanceof BitmapDrawable) || ((BitmapDrawable)last).getBitmap() == null ) {
+							DefaultImageView.this.setAnimation(AnimationUtils.loadAnimation(getContext(), R.animator.image_fade_in));
+						}
+					}
 				}};
 				task.execute();
 		}

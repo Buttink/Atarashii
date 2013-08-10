@@ -335,7 +335,6 @@ RemoveConfirmationDialogFragment.RemoveConfirmationDialogListener {
     public class getDetailsTask extends AsyncTask<Void, Boolean, GenericMALRecord> {
         int mRecordID;
         MALManager mMalManager;
-        ImageCache_OLD imageDownloader = new ImageCache_OLD(context);
         String internalType;
 
         @Override

@@ -30,7 +30,6 @@ import android.widget.TextView;
 public class CoverAdapter<T> extends ArrayAdapter<T> {
 
     private ArrayList<T> objects;
-    private ImageCache_OLD imageManager;
     private Context c;
     private MALManager mManager;
     private String type;
@@ -43,7 +42,6 @@ public class CoverAdapter<T> extends ArrayAdapter<T> {
         super(context, resource, objects);
         this.objects = objects;
         this.c = context;
-        imageManager = new ImageCache_OLD(c);
         mManager = m;
         this.type = type;
         this.resource = resource;
